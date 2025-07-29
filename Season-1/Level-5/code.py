@@ -40,13 +40,13 @@ class SHA256_hasher:
 
 class MD5_hasher:
 
-    # same as above but using a different algorithm to hash which is MD5
+    # updated to use bcrypt for secure password hashing
     def password_hash(self, password):
-        return hashlib.md5(password.encode()).hexdigest()
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(password.encode(), salt).decode('ascii')
 
     def password_verification(self, password, password_hash):
-        password = self.password_hash(password)
-        return secrets.compare_digest(password.encode(), password_hash.encode())
+        return bcrypt.checkpw(password.encode(), password_hash.encode('ascii'))
 
 # a collection of sensitive secrets necessary for the software to operate
 PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
